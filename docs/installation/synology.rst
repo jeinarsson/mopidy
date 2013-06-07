@@ -1,4 +1,4 @@
-.. _raspberrypi-installation:
+.. _synology-installation:
 
 ****************************
 Installation on Synology NAS
@@ -58,8 +58,7 @@ How to
   
     .. code-block:: bash
 
-      ipkg install opt-devel gcc git alsa-lib alsa-utils flac
-      ipkg install wavpack ffmpeg 
+      ipkg install opt-devel gcc git alsa-lib alsa-utils flac wavpack
 
     The ALSA libs in ipkg are not the latest, however, it seems to
     work and it's one less thing to compile..
@@ -71,24 +70,16 @@ How to
       mkdir /opt/tmp
       cd /opt/tmp
 
-#. Compile and install GStreamer
-  
-    First we need the prerequisites. The glib and lots of other stuff
-    in ipkg is too old, so we have to download and compile most things.
-    First need its prerequisites, libffi, gettext and pkg-config.
-    
+  * Get pip for python
+
     .. code-block:: bash
 
-      wget http://ftp.gnome.org/pub/gnome/sources/glib/2.34/glib-2.34.3.tar.xz
-      wget http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
-      wget ftp://sourceware.org/pub/libffi/libffi-3.0.13.tar.gz
-      wget http://ftp.gnu.org/pub/gnu/gettext/gettext-0.18.2.tar.gz
-      tar -xvf glib-2.34.3.tar.xz
-      tar -xvf pkg-config-0.28.tar.gz
-      tar -xvf libffi-3.0.13.tar.gz
-      tar -xvf gettext-0.18.2.tar.gz
+      curl -O https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+      python get-pip.py
 
-    Now, before compiling, we need to work around what seems to be a bug
+#. Fix some environment bugs
+
+  * Now, before compiling, we need to work around what seems to be a bug
     in the pthreads installation: http://forum.synology.com/enu/viewtopic.php?f=90&t=30132
 
     .. code-block:: ssh
@@ -100,7 +91,7 @@ How to
       ln -s libpthread.so.0 libpthread.so
       ln -s libpthread.so.0 libpthread-2.5.so
 
-    And there are two tools, perl and m4, which some packages will look for in the wrong
+  * And there are two tools, perl and m4, which some packages will look for in the wrong
     location. We work around this by simply making a copy of the binaries.
 
     .. code-block:: bash
@@ -108,7 +99,29 @@ How to
       cp /opt/bin/perl* /usr/bin
       cp /opt/bin/m4 /usr/bin
 
-    When making, use prefix=/opt to install in the correct folder, like so:
+  * Also, gstreamer 0.10.22 have some malformed Makefiles (space instead of tabs)
+    so I wrote a small python script to fix that. Download this to your temp directory as well.
+
+    .. code-block:: bash
+    
+      curl -O somewhere/fixmakefiles.py
+      
+#. Compile and install GStreamer
+  
+  * Optional (for now): Build glib with prerequisites. 
+    Not strictly required now, but when mopidy ports to
+    gstreamer 1.x, this will be mandatory anyway.
+
+    .. code-block:: bash
+
+      wget http://ftp.gnome.org/pub/gnome/sources/glib/2.34/glib-2.34.3.tar.xz
+      wget http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
+      wget ftp://sourceware.org/pub/libffi/libffi-3.0.13.tar.gz
+      wget http://ftp.gnu.org/pub/gnu/gettext/gettext-0.18.2.tar.gz
+      tar -xvf glib-2.34.3.tar.xz
+      tar -xvf pkg-config-0.28.tar.gz
+      tar -xvf libffi-3.0.13.tar.gz
+      tar -xvf gettext-0.18.2.tar.gz
 
     .. code-block:: bash
 
@@ -136,46 +149,66 @@ How to
       make install
       cd ..
 
-    Finally we can build the actual gstreamer package. We are going to compile
-    gstreamer, and the base + good + ugly plugins. URLs taken from here:
-    http://gstreamer.freedesktop.org/modules/
-    It seems there are newer versions, but I happened to take 1.0.6.
+  * Now we can build the actual gstreamer package. We are going to compile
+    gstreamer, and the base + good + ugly plugins, and the python bindings. 
+    URLs taken from here:
+    http://gstreamer.freedesktop.org/modules/ and the prerequisite orc library from
+    http://code.entropywave.com/download/orc/
 
-    .. code-block: bash
+    .. code-block:: bash
 
-      wget http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.0.6.tar.xz
-      wget http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.0.6.tar.xz
-      wget http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.0.6.tar.xz
-      wget http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.0.6.tar.xz
-      tar -xvf gstreamer-1.0.6.tar.xz
-      tar -xvf gst-plugins-base-1.0.6.tar.xz
-      tar -xvf gst-plugins-ugly-1.0.6.tar.xz
-      tar -xvf gst-plugins-good-1.0.6.tar.xz    
+      wget http://code.entropywave.com/download/orc/orc-0.4.17.tar.gz
+      wget http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-0.10.22.tar.gz
+      wget http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-0.10.22.tar.gz
+      wget http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-0.10.22.tar.gz
+      wget http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-0.10.19.tar.gz
+      wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.gz
+      tar -xzf orc-0.4.17.tar.gz
+      tar -xzf gstreamer-0.10.22.tar.gz
+      tar -xzf gst-plugins-base-0.10.22.tar.gz
+      tar -xzf gst-plugins-good-0.10.22.tar.gz
+      tar -xzf gst-plugins-ugly-0.10.19.tar.gz
+      tar -xzf gst-python-0.10.22.tar.gz
 
-    And start the compilation/installation fest
+    .. code-block:: bash
 
-    .. code-block: bash
-
-        cd gstreamer-1.0.6
+        cd orc-0.4.17
         ./configure --prefix=/opt
         make
         make install
         cd ..
 
-        cd gst-plugins-base
+        cd gstreamer-0.10.22
         ./configure --prefix=/opt
+        python ../fixmakefiles.py
         make
         make install
         cd ..
 
-        cd gst-plugins-ugly
+        cd gst-plugins-base-0.10.22
         ./configure --prefix=/opt
+        python ../fixmakefiles.py
         make
         make install
         cd ..
 
-        cd gst-plugins-good
+        cd gst-plugins-good-0.10.22
         ./configure --prefix=/opt
+        python ../fixmakefiles.py
+        make
+        make install
+        cd ..
+
+        cd gst-plugins-ugly-0.10.19
+        ./configure --prefix=/opt
+        python ../fixmakefiles.py
+        make
+        make install
+        cd ..
+
+        cd gst-python-0.10.22
+        ./configure --prefix=/opt
+        python ../fixmakefiles.py
         make
         make install
         cd ..
