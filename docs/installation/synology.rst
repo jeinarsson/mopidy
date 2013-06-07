@@ -58,7 +58,11 @@ How to
   
     .. code-block:: bash
 
-      ipkg install opt-devel gcc
+      ipkg install opt-devel gcc git alsa-lib alsa-utils flac
+      ipkg install wavpack ffmpeg 
+
+    The ALSA libs in ipkg are not the latest, however, it seems to
+    work and it's one less thing to compile..
 
   * Make and go to a temporary directory, I use /opt/tmp
   
@@ -96,6 +100,14 @@ How to
       ln -s libpthread.so.0 libpthread.so
       ln -s libpthread.so.0 libpthread-2.5.so
 
+    And there are two tools, perl and m4, which some packages will look for in the wrong
+    location. We work around this by simply making a copy of the binaries.
+
+    .. code-block:: bash
+
+      cp /opt/bin/perl* /usr/bin
+      cp /opt/bin/m4 /usr/bin
+
     When making, use prefix=/opt to install in the correct folder, like so:
 
     .. code-block:: bash
@@ -123,5 +135,50 @@ How to
       make
       make install
       cd ..
+
+    Finally we can build the actual gstreamer package. We are going to compile
+    gstreamer, and the base + good + ugly plugins. URLs taken from here:
+    http://gstreamer.freedesktop.org/modules/
+    It seems there are newer versions, but I happened to take 1.0.6.
+
+    .. code-block: bash
+
+      wget http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.0.6.tar.xz
+      wget http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.0.6.tar.xz
+      wget http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.0.6.tar.xz
+      wget http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.0.6.tar.xz
+      tar -xvf gstreamer-1.0.6.tar.xz
+      tar -xvf gst-plugins-base-1.0.6.tar.xz
+      tar -xvf gst-plugins-ugly-1.0.6.tar.xz
+      tar -xvf gst-plugins-good-1.0.6.tar.xz    
+
+    And start the compilation/installation fest
+
+    .. code-block: bash
+
+        cd gstreamer-1.0.6
+        ./configure --prefix=/opt
+        make
+        make install
+        cd ..
+
+        cd gst-plugins-base
+        ./configure --prefix=/opt
+        make
+        make install
+        cd ..
+
+        cd gst-plugins-ugly
+        ./configure --prefix=/opt
+        make
+        make install
+        cd ..
+
+        cd gst-plugins-good
+        ./configure --prefix=/opt
+        make
+        make install
+        cd ..
+
 
 #. Profit
