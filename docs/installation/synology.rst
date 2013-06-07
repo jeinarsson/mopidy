@@ -105,7 +105,7 @@ How to
     .. code-block:: bash
     
       curl -O somewhere/fixmakefiles.py
-      
+
 #. Compile and install GStreamer
   
   * Optional (for now): Build glib with prerequisites. 
@@ -118,10 +118,10 @@ How to
       wget http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
       wget ftp://sourceware.org/pub/libffi/libffi-3.0.13.tar.gz
       wget http://ftp.gnu.org/pub/gnu/gettext/gettext-0.18.2.tar.gz
-      tar -xvf glib-2.34.3.tar.xz
-      tar -xvf pkg-config-0.28.tar.gz
-      tar -xvf libffi-3.0.13.tar.gz
-      tar -xvf gettext-0.18.2.tar.gz
+      tar xf glib-2.34.3.tar.xz
+      tar xf pkg-config-0.28.tar.gz
+      tar xf libffi-3.0.13.tar.gz
+      tar xf gettext-0.18.2.tar.gz
 
     .. code-block:: bash
 
@@ -157,22 +157,22 @@ How to
 
     .. code-block:: bash
 
-      wget http://code.entropywave.com/download/orc/orc-0.4.17.tar.gz
+      wget http://liboil.freedesktop.org/download/liboil-0.3.17.tar.gz
       wget http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-0.10.22.tar.gz
       wget http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-0.10.22.tar.gz
       wget http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-0.10.22.tar.gz
       wget http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-0.10.19.tar.gz
       wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.gz
-      tar -xzf orc-0.4.17.tar.gz
-      tar -xzf gstreamer-0.10.22.tar.gz
-      tar -xzf gst-plugins-base-0.10.22.tar.gz
-      tar -xzf gst-plugins-good-0.10.22.tar.gz
-      tar -xzf gst-plugins-ugly-0.10.19.tar.gz
-      tar -xzf gst-python-0.10.22.tar.gz
+      tar xzf liboil-0.3.17.tar.gz
+      tar xzf gstreamer-0.10.22.tar.gz
+      tar xzf gst-plugins-base-0.10.22.tar.gz
+      tar xzf gst-plugins-good-0.10.22.tar.gz
+      tar xzf gst-plugins-ugly-0.10.19.tar.gz
+      tar xzf gst-python-0.10.22.tar.gz
 
     .. code-block:: bash
 
-        cd orc-0.4.17
+        cd liboil-0.3.17
         ./configure --prefix=/opt
         make
         make install
