@@ -58,10 +58,10 @@ How to
   
     .. code-block:: bash
 
-      ipkg install opt-devel gcc git alsa-lib alsa-utils flac wavpack
+      ipkg install opt-devel gcc git alsa-lib alsa-utils flac wavpack ffmpeg libogg libvorbisidec libid3tag libjpeg boost-python
 
     The ALSA libs in ipkg are not the latest, however, it seems to
-    work and it's one less thing to compile..
+    work and it's one less thing to compile. Boost-python seems to get the devel headers in place.
 
   * Make and go to a temporary directory, I use /opt/tmp
   
@@ -152,56 +152,52 @@ How to
   * Now we can build the actual gstreamer package. We are going to compile
     gstreamer, and the base + good + ugly plugins, and the python bindings. 
     URLs taken from here:
-    http://gstreamer.freedesktop.org/modules/ and the prerequisite orc library from
+    http://gstreamer.freedesktop.org/modules/ and the prerequisite orc from
     http://code.entropywave.com/download/orc/
 
     .. code-block:: bash
 
-      wget http://liboil.freedesktop.org/download/liboil-0.3.17.tar.gz
-      wget http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-0.10.22.tar.gz
-      wget http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-0.10.22.tar.gz
-      wget http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-0.10.22.tar.gz
-      wget http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-0.10.19.tar.gz
+      wget http://code.entropywave.com/download/orc/orc-0.4.17.tar.gz
+      wget http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-0.10.36.tar.xz
+      wget http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-0.10.36.tar.xz
+      wget http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-0.10.31.tar.xz
+      wget http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-0.10.19.tar.xz
       wget http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.22.tar.gz
-      tar xzf liboil-0.3.17.tar.gz
-      tar xzf gstreamer-0.10.22.tar.gz
-      tar xzf gst-plugins-base-0.10.22.tar.gz
-      tar xzf gst-plugins-good-0.10.22.tar.gz
-      tar xzf gst-plugins-ugly-0.10.19.tar.gz
+      tar xzf orc-0.4.17.tar.gz
+      tar xf gstreamer-0.10.36.tar.xz
+      tar xf gst-plugins-base-0.10.36.tar.xz
+      tar xf gst-plugins-good-0.10.31.tar.xz
+      tar xf gst-plugins-ugly-0.10.19.tar.xz
       tar xzf gst-python-0.10.22.tar.gz
 
     .. code-block:: bash
 
-        cd liboil-0.3.17
+        cd orc-0.4.17
         ./configure --prefix=/opt
         make
         make install
         cd ..
 
-        cd gstreamer-0.10.22
+        cd gstreamer-0.10.36
         ./configure --prefix=/opt
-        python ../fixmakefiles.py
         make
         make install
         cd ..
 
-        cd gst-plugins-base-0.10.22
+        cd gst-plugins-base-0.10.36
         ./configure --prefix=/opt
-        python ../fixmakefiles.py
         make
         make install
         cd ..
 
-        cd gst-plugins-good-0.10.22
+        cd gst-plugins-good-0.10.31
         ./configure --prefix=/opt
-        python ../fixmakefiles.py
         make
         make install
         cd ..
 
         cd gst-plugins-ugly-0.10.19
         ./configure --prefix=/opt
-        python ../fixmakefiles.py
         make
         make install
         cd ..
@@ -214,4 +210,9 @@ How to
         cd ..
 
 
+#. What's wrong now:
+  
+  * different glibs in use
+  * python-dev missing (should we compile python from scratch?)  
+  
 #. Profit
